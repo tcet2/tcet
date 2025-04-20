@@ -1,47 +1,32 @@
 import java.math.BigInteger;
-import java.util.Scanner;
 import java.util.Random;
 
 public class DiffieHellman {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        // Step 1: Publicly shared prime p and primitive root g
-        System.out.println("Enter a prime number p:");
-        BigInteger p = new BigInteger(scanner.nextLine());
-
-        System.out.println("Enter a primitive root g (less than p):");
-        BigInteger g = new BigInteger(scanner.nextLine());
-
-        // Step 2: Private keys (secret)
         Random rand = new Random();
+
+        // Step 1: Publicly shared prime numbers
+        BigInteger p = BigInteger.probablePrime(8, rand); // prime number
+        BigInteger g = new BigInteger("5"); // primitive root (usually small)
+
+        System.out.println("Publicly shared values:\np = " + p + "\ng = " + g);
+
+        // Step 2: Alice chooses a private key 'a'
         BigInteger a = new BigInteger(8, rand); // Alice's private key
+        BigInteger A = g.modPow(a, p); // A = g^a mod p
+        System.out.println("Alice sends A = " + A);
+
+        // Step 3: Bob chooses a private key 'b'
         BigInteger b = new BigInteger(8, rand); // Bob's private key
+        BigInteger B = g.modPow(b, p); // B = g^b mod p
+        System.out.println("Bob sends B = " + B);
 
-        System.out.println("\n[Private] Alice's secret key: " + a);
-        System.out.println("[Private] Bob's secret key: " + b);
+        // Step 4: Both compute shared secret key
+        BigInteger secretKeyA = B.modPow(a, p); // (B^a mod p)
+        BigInteger secretKeyB = A.modPow(b, p); // (A^b mod p)
 
-        // Step 3: Generate public keys
-        BigInteger A = g.modPow(a, p); // Alice's public key
-        BigInteger B = g.modPow(b, p); // Bob's public key
-
-        System.out.println("\n[Public] Alice's public key (A): " + A);
-        System.out.println("[Public] Bob's public key (B): " + B);
-
-        // Step 4: Generate shared secret keys
-        BigInteger sharedSecretAlice = B.modPow(a, p); // s = B^a mod p
-        BigInteger sharedSecretBob = A.modPow(b, p);   // s = A^b mod p
-
-        System.out.println("\n[Shared Secret] Calculated by Alice: " + sharedSecretAlice);
-        System.out.println("[Shared Secret] Calculated by Bob:   " + sharedSecretBob);
-
-        if (sharedSecretAlice.equals(sharedSecretBob)) {
-            System.out.println("\n✅ Key Exchange Successful: Shared key established!");
-        } else {
-            System.out.println("\n❌ Key Exchange Failed!");
-        }
-
-        scanner.close();
+        System.out.println("Shared secret key at Alice's side: " + secretKeyA);
+        System.out.println("Shared secret key at Bob's side: " + secretKeyB);
     }
 }
