@@ -1,56 +1,33 @@
 import java.util.Scanner;
 
 public class SubstitutionCipher {
-    static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static String key =      "QWERTYUIOPASDFGHJKLZXCVBNM"; // substitution key
 
-    // Encrypt plaintext using the key
-    public static String encrypt(String plaintext) {
-        plaintext = plaintext.toUpperCase();
-        StringBuilder ciphertext = new StringBuilder();
+    public static String encrypt(String text, int shift) {
+        StringBuilder result = new StringBuilder();
 
-        for (int i = 0; i < plaintext.length(); i++) {
-            char c = plaintext.charAt(i);
-            int index = alphabet.indexOf(c);
-            if (index != -1) {
-                ciphertext.append(key.charAt(index));
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (Character.isLetter(c)) {
+                char base = Character.isLowerCase(c) ? 'a' : 'A';
+                result.append((char) ((c - base + shift) % 26 + base));
             } else {
-                ciphertext.append(c); // keep non-letters unchanged
+                result.append(c);
             }
         }
 
-        return ciphertext.toString();
-    }
-
-    // Decrypt ciphertext using the key
-    public static String decrypt(String ciphertext) {
-        ciphertext = ciphertext.toUpperCase();
-        StringBuilder plaintext = new StringBuilder();
-
-        for (int i = 0; i < ciphertext.length(); i++) {
-            char c = ciphertext.charAt(i);
-            int index = key.indexOf(c);
-            if (index != -1) {
-                plaintext.append(alphabet.charAt(index));
-            } else {
-                plaintext.append(c); // keep non-letters unchanged
-            }
-        }
-
-        return plaintext.toString();
+        return result.toString();
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter message to encrypt:");
-        String input = scanner.nextLine();
 
-        String encrypted = encrypt(input);
-        System.out.println("Encrypted: " + encrypted);
+        System.out.print("Enter message: ");
+        String text = scanner.nextLine();
 
-        String decrypted = decrypt(encrypted);
-        System.out.println("Decrypted: " + decrypted);
+        System.out.print("Enter shift: ");
+        int shift = scanner.nextInt();
 
-        scanner.close();
+        String encrypted = encrypt(text, shift);
+        System.out.println("Encrypted message: " + encrypted);
     }
 }
