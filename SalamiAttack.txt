@@ -1,49 +1,26 @@
-import java.util.ArrayList;
-import java.util.List;
+public class SalamiAttack {
 
-class Account {
-    String name;
-    double balance;
-
-    Account(String name, double balance) {
-        this.name = name;
-        this.balance = balance;
-    }
-}
-
-public class SalamiAttackSimulation {
     public static void main(String[] args) {
-        // Step 1: Create some dummy user accounts
-        List<Account> users = new ArrayList<>();
-        users.add(new Account("Alice", 1000.005));
-        users.add(new Account("Bob", 2000.007));
-        users.add(new Account("Charlie", 1500.003));
-        users.add(new Account("David", 1800.009));
+        double[] accountBalances = {1000.00, 850.50, 920.75, 1120.25}; // Sample user accounts
+        double attackerAccount = 0.0; // Attacker's initial amount
+        double stolenAmount = 0.01; // Tiny amount to steal
 
-        // Step 2: Attacker's account
-        Account attacker = new Account("Attacker", 0.0);
-
-        // Step 3: Perform the "salami slicing" during rounding
-        for (Account user : users) {
-            double originalBalance = user.balance;
-
-            // Round balance to 2 decimal places (simulate legitimate operation)
-            double roundedBalance = Math.floor(user.balance * 100) / 100;
-
-            // Slice the small amount (e.g., 0.005) and transfer to attacker
-            double salamiSlice = originalBalance - roundedBalance;
-            attacker.balance += salamiSlice;
-
-            // Update user's visible balance
-            user.balance = roundedBalance;
+        System.out.println("Before attack:");
+        for (int i = 0; i < accountBalances.length; i++) {
+            System.out.println("Account " + (i + 1) + ": $" + accountBalances[i]);
         }
 
-        // Step 4: Print results
-        System.out.println("== Account Balances ==");
-        for (Account user : users) {
-            System.out.println(user.name + ": ₹" + user.balance);
+        // Perform the salami attack
+        for (int i = 0; i < accountBalances.length; i++) {
+            accountBalances[i] -= stolenAmount;
+            attackerAccount += stolenAmount;
         }
 
-        System.out.println("\n💰 Attacker collected: ₹" + attacker.balance);
+        System.out.println("\nAfter attack:");
+        for (int i = 0; i < accountBalances.length; i++) {
+            System.out.println("Account " + (i + 1) + ": $" + accountBalances[i]);
+        }
+
+        System.out.println("\nAttacker's Account after stealing: $" + attackerAccount);
     }
 }
