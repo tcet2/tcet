@@ -1,0 +1,25 @@
+public class BruteForceAttack {
+    private static final String TARGET_PASSWORD = "123"; // Change this for testing
+    private static final String CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz"; // Available characters
+
+    public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
+        bruteForceAttack(TARGET_PASSWORD.length(), "");
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time taken: " + (endTime - startTime) + " ms");
+    }
+
+    private static void bruteForceAttack(int maxLength, String attempt) {
+        if (attempt.length() == maxLength) {
+            if (attempt.equals(TARGET_PASSWORD)) {
+                System.out.println("✅ Password found: " + attempt);
+                System.exit(0); // Exit once the password is found
+            }
+            return;
+        }
+
+        for (int i = 0; i < CHARACTERS.length(); i++) {
+            bruteForceAttack(maxLength, attempt + CHARACTERS.charAt(i));
+        }
+    }
+}

@@ -1,0 +1,56 @@
+import java.util.Scanner;
+
+public class SubstitutionCipher {
+    static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static String key =      "QWERTYUIOPASDFGHJKLZXCVBNM"; // substitution key
+
+    // Encrypt plaintext using the key
+    public static String encrypt(String plaintext) {
+        plaintext = plaintext.toUpperCase();
+        StringBuilder ciphertext = new StringBuilder();
+
+        for (int i = 0; i < plaintext.length(); i++) {
+            char c = plaintext.charAt(i);
+            int index = alphabet.indexOf(c);
+            if (index != -1) {
+                ciphertext.append(key.charAt(index));
+            } else {
+                ciphertext.append(c); // keep non-letters unchanged
+            }
+        }
+
+        return ciphertext.toString();
+    }
+
+    // Decrypt ciphertext using the key
+    public static String decrypt(String ciphertext) {
+        ciphertext = ciphertext.toUpperCase();
+        StringBuilder plaintext = new StringBuilder();
+
+        for (int i = 0; i < ciphertext.length(); i++) {
+            char c = ciphertext.charAt(i);
+            int index = key.indexOf(c);
+            if (index != -1) {
+                plaintext.append(alphabet.charAt(index));
+            } else {
+                plaintext.append(c); // keep non-letters unchanged
+            }
+        }
+
+        return plaintext.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter message to encrypt:");
+        String input = scanner.nextLine();
+
+        String encrypted = encrypt(input);
+        System.out.println("Encrypted: " + encrypted);
+
+        String decrypted = decrypt(encrypted);
+        System.out.println("Decrypted: " + decrypted);
+
+        scanner.close();
+    }
+}

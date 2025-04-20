@@ -1,0 +1,49 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Account {
+    String name;
+    double balance;
+
+    Account(String name, double balance) {
+        this.name = name;
+        this.balance = balance;
+    }
+}
+
+public class SalamiAttackSimulation {
+    public static void main(String[] args) {
+        // Step 1: Create some dummy user accounts
+        List<Account> users = new ArrayList<>();
+        users.add(new Account("Alice", 1000.005));
+        users.add(new Account("Bob", 2000.007));
+        users.add(new Account("Charlie", 1500.003));
+        users.add(new Account("David", 1800.009));
+
+        // Step 2: Attacker's account
+        Account attacker = new Account("Attacker", 0.0);
+
+        // Step 3: Perform the "salami slicing" during rounding
+        for (Account user : users) {
+            double originalBalance = user.balance;
+
+            // Round balance to 2 decimal places (simulate legitimate operation)
+            double roundedBalance = Math.floor(user.balance * 100) / 100;
+
+            // Slice the small amount (e.g., 0.005) and transfer to attacker
+            double salamiSlice = originalBalance - roundedBalance;
+            attacker.balance += salamiSlice;
+
+            // Update user's visible balance
+            user.balance = roundedBalance;
+        }
+
+        // Step 4: Print results
+        System.out.println("== Account Balances ==");
+        for (Account user : users) {
+            System.out.println(user.name + ": ₹" + user.balance);
+        }
+
+        System.out.println("\n💰 Attacker collected: ₹" + attacker.balance);
+    }
+}

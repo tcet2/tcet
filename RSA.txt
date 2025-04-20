@@ -1,0 +1,67 @@
+import java.math.BigInteger;
+import java.util.Random;
+import java.util.Scanner;
+
+public class SimpleRSA {
+
+    static BigInteger p, q, n, phi, e, d;
+
+    // Step 1: Generate primes and compute public/private keys
+    public static void generateKeys() {
+        // Generate two large random prime numbers
+        Random rand = new Random();
+        p = BigInteger.probablePrime(8, rand); // 8-bit primes for simplicity
+        q = BigInteger.probablePrime(8, rand);
+
+        System.out.println("Prime p: " + p);
+        System.out.println("Prime q: " + q);
+
+        // Step 2: Compute n = p * q
+        n = p.multiply(q);
+        System.out.println("n (p * q): " + n);
+
+        // Step 3: Compute phi(n) = (p-1)(q-1)
+        phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        System.out.println("Euler's Totient (phi): " + phi);
+
+        // Step 4: Choose e such that 1 < e < phi and gcd(e, phi) = 1
+        e = BigInteger.valueOf(3);
+        while (phi.gcd(e).intValue() > 1) {
+            e = e.add(BigInteger.TWO);
+        }
+        System.out.println("Public exponent e: " + e);
+
+        // Step 5: Calculate d such that (d * e) % phi = 1
+        d = e.modInverse(phi);
+        System.out.println("Private exponent d: " + d);
+    }
+
+    // Encryption: c = (m^e) mod n
+    public static BigInteger encrypt(BigInteger message) {
+        return message.modPow(e, n);
+    }
+
+    // Decryption: m = (c^d) mod n
+    public static BigInteger decrypt(BigInteger ciphertext) {
+        return ciphertext.modPow(d, n);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        generateKeys(); // Generate keys first
+
+        // Step 6: Get plaintext input
+        System.out.print("\nEnter a message (as number): ");
+        BigInteger message = scanner.nextBigInteger();
+
+        // Step 7: Encrypt
+        BigInteger ciphertext = encrypt(message);
+        System.out.println("Encrypted message: " + ciphertext);
+
+        // Step 8: Decrypt
+        BigInteger decrypted = decrypt(ciphertext);
+        System.out.println("Decrypted message: " + decrypted);
+
+        scanner.close();
+    }
+}

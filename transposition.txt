@@ -1,0 +1,55 @@
+import java.util.*;
+
+public class TranspositionCipher {
+
+    // Function to encrypt the plaintext using Columnar Transposition
+    public static String encrypt(String plaintext, String key) {
+        int col = key.length();
+        int row = (int) Math.ceil((double) plaintext.length() / col);
+
+        // Fill matrix row-wise
+        char[][] matrix = new char[row][col];
+        int k = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (k < plaintext.length()) {
+                    matrix[i][j] = plaintext.charAt(k++);
+                } else {
+                    matrix[i][j] = 'X'; // Padding character
+                }
+            }
+        }
+
+        // Read columns in the order of the key
+        char[] keyOrder = key.toCharArray();
+        Integer[] order = new Integer[col];
+        for (int i = 0; i < col; i++) order[i] = i;
+
+        Arrays.sort(order, Comparator.comparingInt(i -> keyOrder[i]));
+
+        StringBuilder ciphertext = new StringBuilder();
+        for (int i = 0; i < col; i++) {
+            int colIndex = order[i];
+            for (int j = 0; j < row; j++) {
+                ciphertext.append(matrix[j][colIndex]);
+            }
+        }
+
+        return ciphertext.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Enter message to encrypt:");
+        String message = sc.nextLine().replaceAll("\\s+", "").toUpperCase();
+
+        System.out.println("Enter numeric key (e.g., 4312):");
+        String key = sc.nextLine();
+
+        String encrypted = encrypt(message, key);
+        System.out.println("Encrypted message: " + encrypted);
+
+        sc.close();
+    }
+}
