@@ -1,82 +1,57 @@
-import java.util.Scanner;
-
 public class PolyalphabeticCipher {
 
-    // Function to generate the repeated key
-    public static String generateKey(String text, String key) {
+    // Encrypt the plaintext using the key
+    public static String encrypt(String plaintext, String key) {
         StringBuilder result = new StringBuilder();
-        key = key.toUpperCase();
-        int keyIndex = 0;
+        key = key.toLowerCase();
 
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+        for (int i = 0, j = 0; i < plaintext.length(); i++) {
+            char c = plaintext.charAt(i);
+
             if (Character.isLetter(c)) {
-                result.append(key.charAt(keyIndex % key.length()));
-                keyIndex++;
+                char base = Character.isUpperCase(c) ? 'A' : 'a';
+                int shift = key.charAt(j % key.length()) - 'a';
+                char encryptedChar = (char) ((c - base + shift) % 26 + base);
+                result.append(encryptedChar);
+                j++;
             } else {
-                result.append(c); // Keep spaces/symbols
+                result.append(c); // Non-letters unchanged
             }
         }
+
         return result.toString();
     }
 
-    // Function to encrypt the plaintext
-    public static String encrypt(String plaintext, String key) {
-        StringBuilder ciphertext = new StringBuilder();
-        plaintext = plaintext.toUpperCase();
-        key = generateKey(plaintext, key);
-
-        for (int i = 0; i < plaintext.length(); i++) {
-            char p = plaintext.charAt(i);
-            char k = key.charAt(i);
-
-            if (Character.isLetter(p)) {
-                int encryptedChar = ((p - 'A') + (k - 'A')) % 26;
-                ciphertext.append((char) (encryptedChar + 'A'));
-            } else {
-                ciphertext.append(p);
-            }
-        }
-
-        return ciphertext.toString();
-    }
-
-    // Function to decrypt the ciphertext
+    // Decrypt the ciphertext using the key
     public static String decrypt(String ciphertext, String key) {
-        StringBuilder plaintext = new StringBuilder();
-        ciphertext = ciphertext.toUpperCase();
-        key = generateKey(ciphertext, key);
+        StringBuilder result = new StringBuilder();
+        key = key.toLowerCase();
 
-        for (int i = 0; i < ciphertext.length(); i++) {
+        for (int i = 0, j = 0; i < ciphertext.length(); i++) {
             char c = ciphertext.charAt(i);
-            char k = key.charAt(i);
 
             if (Character.isLetter(c)) {
-                int decryptedChar = ((c - 'A') - (k - 'A') + 26) % 26;
-                plaintext.append((char) (decryptedChar + 'A'));
+                char base = Character.isUpperCase(c) ? 'A' : 'a';
+                int shift = key.charAt(j % key.length()) - 'a';
+                char decryptedChar = (char) ((c - base - shift + 26) % 26 + base);
+                result.append(decryptedChar);
+                j++;
             } else {
-                plaintext.append(c);
+                result.append(c); // Non-letters unchanged
             }
         }
 
-        return plaintext.toString();
+        return result.toString();
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        String message = "AttackAtDawn";
+        String keyword = "key";
 
-        System.out.println("Enter plaintext:");
-        String plaintext = sc.nextLine();
-
-        System.out.println("Enter keyword:");
-        String keyword = sc.nextLine();
-
-        String encrypted = encrypt(plaintext, keyword);
+        String encrypted = encrypt(message, keyword);
         System.out.println("Encrypted: " + encrypted);
 
         String decrypted = decrypt(encrypted, keyword);
         System.out.println("Decrypted: " + decrypted);
-
-        sc.close();
     }
 }
